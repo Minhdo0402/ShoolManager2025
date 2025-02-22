@@ -1,8 +1,9 @@
-import { useState } from "react";
-import SwipeableViews from "react-swipeable-views";
+//import { useState } from "react";
 import { Typography, Box, Button } from "@mui/material";
 import ArrowBackIosIcon from "@mui/icons-material/ArrowBackIos";
 import ArrowForwardIosIcon from "@mui/icons-material/ArrowForwardIos";
+import "keen-slider/keen-slider.min.css";
+import { useKeenSlider } from "keen-slider/react";
 
 const carouselItems = [
   {
@@ -26,27 +27,18 @@ const carouselItems = [
 ];
 
 export default function Carousel() {
-  const [activeIndex, setActiveIndex] = useState(0);
-
-  const handleNext = () => {
-    setActiveIndex((prevIndex) => (prevIndex + 1) % carouselItems.length);
-  };
-
-  const handleBack = () => {
-    setActiveIndex((prevIndex) =>
-      prevIndex === 0 ? carouselItems.length - 1 : prevIndex - 1
-    );
-  };
+  const [sliderRef, instanceRef] = useKeenSlider({
+    loop: true,
+    slides: { perView: 1 },
+  });
 
   return (
     <Box sx={{ position: "relative", width: "100%" }}>
-      <SwipeableViews
-        index={activeIndex}
-        onChange={(index) => setActiveIndex(index)}
-      >
+      <Box ref={sliderRef} className="keen-slider">
         {carouselItems.map((item, index) => (
           <Box
             key={index}
+            className="keen-slider__slide"
             sx={{ position: "relative", textAlign: "center", color: "white" }}
           >
             <img
@@ -76,9 +68,9 @@ export default function Carousel() {
             </Box>
           </Box>
         ))}
-      </SwipeableViews>
+      </Box>
 
-      {/* Navigation Buttons*/}
+      {/* Navigation Buttons */}
       <Box
         sx={{
           position: "absolute",
@@ -88,7 +80,7 @@ export default function Carousel() {
           zIndex: 1,
         }}
       >
-        <Button variant="contained" onClick={handleNext}>
+        <Button variant="contained" onClick={() => instanceRef.current?.prev()}>
           <ArrowBackIosIcon />
         </Button>
       </Box>
@@ -101,7 +93,7 @@ export default function Carousel() {
           zIndex: 1,
         }}
       >
-        <Button variant="contained" onClick={handleBack}>
+        <Button variant="contained" onClick={() => instanceRef.current?.next()}>
           <ArrowForwardIosIcon />
         </Button>
       </Box>
